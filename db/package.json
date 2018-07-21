@@ -1,0 +1,19 @@
+{
+    "name": "db",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "test": "node ./node_modules/mocha/bin/_mocha"
+    },
+    "keywords": [],
+    "author": "xuchdeid",
+    "license": "GPL",
+    "devDependencies": {
+        "chai": "4.1.1",
+        "mocha": "3.5.0"
+    },
+    "dependencies": {
+        "knex": "^0.13.0",
+        "pg": "^7.1.2"
+    }
+}
