@@ -14,71 +14,109 @@ const cheerio = require('cheerio');
  * </tr>
  */
 
-'use strict';
+('use strict');
 
 let http = new Http('https://www.fangjiagou.com');
 let itemNames = [
     {
-        name: 'index', 
+        name: 'index',
         type: 'string'
-    }, 
+    },
     {
         name: 'change',
         type: 'float'
     },
     {
-        name: 'title', 
+        name: 'title',
         type: 'string'
     },
     {
-        name: 'desc', 
+        name: 'desc',
         type: 'string'
-    }, 
+    },
     {
-        name: 'unit', 
+        name: 'unit',
         type: 'float'
-    }, 
-    { 
-        name: 'total', 
-        type: 'float'
-    }, 
+    },
     {
-        name: 'last', 
+        name: 'total',
         type: 'float'
-    }, 
+    },
     {
-        name: 'date', 
+        name: 'last',
+        type: 'float'
+    },
+    {
+        name: 'date',
         type: 'string'
     }
 ];
 
 function getDownList(city) {
     return new Promise((resolve, reject) => {
-        http.get('/down.php', {city: city})
-            .then(result => {
-                let list = [];
-                const $ = cheerio.load(result);
-                let data = $('tbody tr').each(function(i, elem) {
-                    let item = {};
-                    $(this).find('td').each(function(i, elem) {
+        http.get('/down.php', { city: city }).then(result => {
+            let list = [];
+            const $ = cheerio.load(result);
+            let data = $('tbody tr').each(function(i, elem) {
+                let item = {};
+                $(this)
+                    .find('td')
+                    .each(function(i, elem) {
                         if (i == 2) {
-                            item['url'] = $(this).find('a').attr('href');
+                            item['url'] = $(this)
+                                .find('a')
+                                .attr('href');
                         }
-                        let value = $(this).text().trim();
+                        let value = $(this)
+                            .text()
+                            .trim();
                         if (itemNames[i].type === 'float') {
                             item[itemNames[i].name] = parseFloat(value);
                         } else {
                             item[itemNames[i].name] = value;
                         }
                     });
-                    list[i] = item;
-                });
-    
-                resolve(list);
+                list[i] = item;
             });
+
+            resolve(list);
+        });
+    });
+}
+
+function getUpList(city) {
+    return new Promise((resolve, reject) => {
+        http.get('/up.php', { city: city }).then(result => {
+            let list = [];
+            const $ = cheerio.load(result);
+            let data = $('tbody tr').each(function(i, elem) {
+                let item = {};
+                $(this)
+                    .find('td')
+                    .each(function(i, elem) {
+                        if (i == 2) {
+                            item['url'] = $(this)
+                                .find('a')
+                                .attr('href');
+                        }
+                        let value = $(this)
+                            .text()
+                            .trim();
+                        if (itemNames[i].type === 'float') {
+                            item[itemNames[i].name] = parseFloat(value);
+                        } else {
+                            item[itemNames[i].name] = value;
+                        }
+                    });
+                list[i] = item;
+            });
+
+            resolve(list);
+        });
     });
 }
 
 module.exports = {
-    getDownList: getDownList
+    getDownList,
+    getUpList
 };

@@ -6,6 +6,8 @@ const fangjia = require('../lib');
 //const Record = db.Record;
 const sells = require('../../db/queries/sells');
 const records = require('../../db/queries/records');
+const result = require('../../db/queries/result');
+
 ('use strict');
 
 let option = optionator({
@@ -44,52 +46,56 @@ if (currentOptions.version) {
 } else if (currentOptions.help) {
     console.log(option.generateHelp());
 } else if (currentOptions.list) {
-    Promise.resolve(cities).then(all => {
-        all.map(async city => {
-            let data = await sells.find({ city: city }, 'id');
-            console.log(`${city} ${data.length}`);
-        });
+    cities.map(async city => {
+        let data = await result.getAll(city);
+        console.log(data[0]);
     });
-} else if (cities.length == 1) {
-    fangjia
-        .getDownList(cities[0])
-        .then(list => {
-            list.map(async item => {
-                const sell = {
-                    title: item.title,
-                    desc: item.desc,
-                    url: item.url,
-                    city: cities[0]
-                };
+} else if (cities.length > 0) {
+    cities.map(city => {
+        Promise.all([fangjia.getDownList(city), fangjia.getUpList(city)])
+            .then(lists => {
+                lists.map(list => {
+                    list.map(async item => {
+                        const sell = {
+                            title: item.title,
+                            desc: item.desc,
+                            url: item.url,
+                            city: city
+                        };
 
-                const record = {
-                    total: item.total,
-                    last: item.last,
-                    date: item.date,
-                    sell_id: null
-                };
+                        const record = {
+                            total: item.total,
+                            last: item.last,
+                            date: item.date
+                        };
 
-                let data = await sells.find({ url: sell.url }, 'id');
+                        let data = await sells.find({ url: sell.url }, 'id');
 
-                let id = data[0] ? data[0].id : null;
-                if (id) {
-                    record.sell_id = id;
-                    await records.add(record);
-                } else {
-                    data = await sells.add(sell);
-                    id = data[0].id;
+                        let id = data[0] ? data[0].id : null;
+                        if (id) {
+                            data = await records.find(record, 'id');
+                            if (!data[0]) {
+                                record.sell_id = id;
+                                console.log('add record');
+                                await records.add(record);
+                            }
+                        } else {
+                            data = await sells.add(sell);
+                            id = data[0].id;
 
-                    if (id) {
-                        record.sell_id = id;
-                        await records.add(record);
-                    }
-                }
-                console.log(sell.url);
+                            if (id) {
+                                record.sell_id = id;
+                                await records.add(record);
+                            }
+                        }
+                        console.log(sell.url);
+                    });
+                });
+            })
+            .catch(err => {
+                console.error(err);
             });
-        })
-        .catch(err => {
-            console.error(err);
-        });
+    });
 } else {
     console.log(option.generateHelp());
 }

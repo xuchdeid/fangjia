@@ -10,6 +10,12 @@ function get(id) {
         .where({ id: parseInt(id) });
 }
 
+function find(where, select) {
+    return knex('record')
+        .select(select)
+        .where(where);
+}
+
 function add(record) {
     return knex('record')
         .insert(record)
@@ -33,6 +39,7 @@ function del(id) {
 module.exports = {
     getAll,
     get,
+    find,
     add,
     update,
     del
