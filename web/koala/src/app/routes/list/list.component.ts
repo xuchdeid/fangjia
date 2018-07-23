@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DataSource } from '../service/api';
+import { DataSource } from './api';
 
 @Component({
     selector: 'app-list',
@@ -12,7 +12,9 @@ export class ListComponent implements OnInit {
 
     constructor(private api: DataSource) {}
 
-    ngOnInit() {
+    ngOnInit() {}
+
+    refresh() {
         this.api.get('http://127.0.0.1:2333/api/v1/list/sh').subscribe(data => {
             console.log(data);
             this.list = data.data;

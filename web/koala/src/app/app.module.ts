@@ -8,20 +8,20 @@ import { HttpModule } from '@angular/http';
 import { NgZorroAntdModule, NZ_I18N, zh_CN } from 'ng-zorro-antd';
 import { registerLocaleData } from '@angular/common';
 import zh from '@angular/common/locales/zh';
-import { ListComponent } from './list/list.component';
-import { AppRoute } from './app.routes';
-
+import { AppRoute } from './routes/routes';
+import { RoutesModule } from './routes/routes.module';
 registerLocaleData(zh);
 
 @NgModule({
-    declarations: [AppComponent, ListComponent],
+    declarations: [AppComponent],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
         FormsModule,
         HttpModule,
         NgZorroAntdModule,
-        AppRoute
+        AppRoute,
+        RoutesModule
     ],
     providers: [{ provide: NZ_I18N, useValue: zh_CN }],
     bootstrap: [AppComponent]
