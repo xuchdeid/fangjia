@@ -2,8 +2,7 @@
 
 const optionator = require('optionator');
 const fangjia = require('../lib');
-//const db = require('../lib/collection');
-//const Record = db.Record;
+
 const sells = require('../../db/queries/sells');
 const records = require('../../db/queries/records');
 const result = require('../../db/queries/result');
@@ -16,8 +15,7 @@ let option = optionator({
         concatRepeatedArrays: false,
         mergeRepeatedObjects: false
     },
-    options: [
-        {
+    options: [{
             option: 'version',
             alias: 'v',
             type: 'Boolean',
@@ -51,51 +49,76 @@ if (currentOptions.version) {
         console.log(data[0]);
     });
 } else if (cities.length > 0) {
+    let allTasks = [];
     cities.map(city => {
-        Promise.all([fangjia.getDownList(city), fangjia.getUpList(city)])
-            .then(lists => {
-                lists.map(list => {
-                    list.map(async item => {
-                        const sell = {
-                            title: item.title,
-                            desc: item.desc,
-                            url: item.url,
-                            city: city
-                        };
-
-                        const record = {
-                            total: item.total,
-                            last: item.last,
-                            date: item.date
-                        };
-
-                        let data = await sells.find({ url: sell.url }, 'id');
-
-                        let id = data[0] ? data[0].id : null;
-                        if (id) {
-                            data = await records.find(record, 'id');
-                            if (!data[0]) {
-                                record.sell_id = id;
-                                console.log('add record');
-                                await records.add(record);
-                            }
-                        } else {
-                            data = await sells.add(sell);
-                            id = data[0].id;
-
-                            if (id) {
-                                record.sell_id = id;
-                                await records.add(record);
-                            }
-                        }
-                        console.log(sell.url);
-                    });
-                });
-            })
-            .catch(err => {
-                console.error(err);
-            });
+        allTasks.push(fetchCity(city));
     });
+    Promise.all(allTasks)
+        .then(result => {
+            console.log('fetch finish!');
+            process.exit(0);
+        });
 } else {
     console.log(option.generateHelp());
 }
+
+function fetchCity(city) {
+    return Promise.all([fangjia.getDownList(city), fangjia.getUpList(city)])
+        .then(lists => {
+            let allTasks = [];
+            lists.map(list => {
+                list.map(item => {
+                    allTasks.push(new Promise((resolve, reject) => {
+                        setDataToDb(city, item, resolve, reject);
+                    }));
+                });
+            });
+
+            return Promise.all(allTasks);
+        })
+        .then(urls => {
+            console.log(`${city}: ${urls.length}`);
+        })
+        .catch(err => {
+            console.error(err);
+        });
+}
+
+async function setDataToDb(city, item, resolve, reject) {
+    const sell = {
+        title: item.title,
+        desc: item.desc,
+        url: item.url,
+        city: city
+    };
+
+    const record = {
+        total: item.total,
+        last: item.last,
+        date: item.date
+    };
+
+    let data = await sells.find({
+        url: sell.url
+    }, 'id');
+
+    let id = data[0] ? data[0].id : null;
+    if (id) {
+        data = await records.find(record, 'id');
+        if (!data[0]) {
+            record.sell_id = id;
+            console.log('add record');
+            await records.add(record);
+        }
+    } else {
+        data = await sells.add(sell);
+        id = data[0].id;
+
+        if (id) {
+            record.sell_id = id;
+            await records.add(record);
+        }
+    }
+    //console.log(sell.url);
+    resolve(sell.url);
+};

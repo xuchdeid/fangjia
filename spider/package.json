@@ -10,6 +10,10 @@
   "bin": {
     "fangjia": "./bin/cli.js"
   },
+  "scripts": {
+    "fetch": "node ./bin/cli.js",
+    "list": "node ./bin/cli.js --l"
+  },
   "engines": {
     "node": ">=6.13.1"
   },
@@ -22,6 +26,8 @@
     "request": "^2.83.0"
   },
   "devDependencies": {
+    "eslint-config-google": "^0.9.1",
+    "eslint-config-prettier": "^2.9.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-node": "^6.0.1",
