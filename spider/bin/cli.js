@@ -15,7 +15,8 @@ let option = optionator({
         concatRepeatedArrays: false,
         mergeRepeatedObjects: false
     },
-    options: [{
+    options: [
+        {
             option: 'version',
             alias: 'v',
             type: 'Boolean',
@@ -53,11 +54,10 @@ if (currentOptions.version) {
     cities.map(city => {
         allTasks.push(fetchCity(city));
     });
-    Promise.all(allTasks)
-        .then(result => {
-            console.log('fetch finish!');
-            process.exit(0);
-        });
+    Promise.all(allTasks).then(result => {
+        console.log('fetch finish!');
+        process.exit(0);
+    });
 } else {
     console.log(option.generateHelp());
 }
@@ -68,9 +68,11 @@ function fetchCity(city) {
             let allTasks = [];
             lists.map(list => {
                 list.map(item => {
-                    allTasks.push(new Promise((resolve, reject) => {
-                        setDataToDb(city, item, resolve, reject);
-                    }));
+                    allTasks.push(
+                        new Promise((resolve, reject) => {
+                            setDataToDb(city, item, resolve, reject);
+                        })
+                    );
                 });
             });
 
@@ -98,22 +100,24 @@ async function setDataToDb(city, item, resolve, reject) {
         date: item.date
     };
 
-    let data = await sells.find({
-        url: sell.url
-    }, 'id');
+    let data = await sells.find(
+        {
+            url: sell.url
+        },
+        'id'
+    );
 
     let id = data[0] ? data[0].id : null;
     if (id) {
+        record.sell_id = id;
         data = await records.find(record, 'id');
         if (!data[0]) {
-            record.sell_id = id;
             console.log('add record');
             await records.add(record);
         }
     } else {
         data = await sells.add(sell);
         id = data[0].id;
-
         if (id) {
             record.sell_id = id;
             await records.add(record);
@@ -121,4 +125,4 @@ async function setDataToDb(city, item, resolve, reject) {
     }
     //console.log(sell.url);
     resolve(sell.url);
-};
+}

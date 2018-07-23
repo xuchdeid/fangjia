@@ -75,6 +75,10 @@ function getDownList(city) {
                         } else {
                             item[itemNames[i].name] = value;
                         }
+
+                        if (item[itemNames[i].name] == null) {
+                            console.log(elem);
+                        }
                     });
                 list[i] = item;
             });
