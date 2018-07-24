@@ -1,23 +1,30 @@
 {
-  "name": "rest-api",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "start": "node ./src/index.js",
-    "test": "node ./node_modules/mocha/bin/_mocha"
-  },
-  "keywords": [],
-  "author": "xuchdeid",
-  "license": "ISC",
-  "devDependencies": {
-    "chai": "4.1.1",
-    "chai-http": "^3.0.0",
-    "mocha": "3.5.0"
-  },
-  "dependencies": {
-    "@koa/cors": "^2.2.2",
-    "koa": "^2.3.0",
-    "koa-bodyparser": "^4.2.0",
-    "koa-router": "^7.2.1"
-  }
+    "name": "rest-api",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "start": "node ./src/index.js",
+        "test": "node ./node_modules/mocha/bin/_mocha"
+    },
+    "keywords": [],
+    "author": "xuchdeid",
+    "license": "ISC",
+    "devDependencies": {
+        "chai": "4.1.1",
+        "chai-http": "^3.0.0",
+        "mocha": "3.5.0"
+    },
+    "dependencies": {
+        "@koa/cors": "^2.2.2",
+        "koa": "^2.3.0",
+        "koa-bodyparser": "^4.2.0",
+        "koa-router": "^7.2.1",
+        "eslint-config-google": "^0.9.1",
+        "eslint-config-prettier": "^2.9.0",
+        "eslint-config-standard": "^11.0.0",
+        "eslint-plugin-import": "^2.9.0",
+        "eslint-plugin-node": "^6.0.1",
+        "eslint-plugin-promise": "^3.7.0",
+        "eslint-plugin-standard": "^3.0.1"
+    }
 }

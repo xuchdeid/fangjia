@@ -6,6 +6,22 @@ const cors = require('@koa/cors');
 const app = new Koa();
 const PORT = 2333;
 
+app.use(async (ctx, next) => {
+    const start = Date.now();
+    await next();
+    const ms = Date.now() - start;
+    ctx.set('X-Response-Time', `${ms}ms`);
+});
+
+// logger
+
+app.use(async (ctx, next) => {
+    const start = Date.now();
+    await next();
+    const ms = Date.now() - start;
+    console.log(`${ctx.method} ${ctx.url} - ${ms}`);
+});
+
 app.use(cors({
     'Access-Control-Allow-Origin': 'http://localhost:8080'
 }));
