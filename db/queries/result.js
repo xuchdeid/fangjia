@@ -5,7 +5,7 @@ const knex = require('../connection');
 function getAll(city, param = {}) {
     param.city = city;
     return knex('sell')
-        .select('sell.id as sell_id', 'sell.desc', 'total', 'last', 'date')
+        .select('sell.id as sell_id', 'sell.desc', 'url', 'total', 'last', 'date')
         .leftJoin('record', 'sell.id', 'record.sell_id')
         .where(param);
 }

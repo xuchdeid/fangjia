@@ -1,34 +1,42 @@
-<div class="content__title">
-  <nz-input-group nzSearch nzSize="large" [nzSuffix]="suffixButton" style="width: 100%">
-    <input type="text" [(ngModel)]="city" nz-input placeholder="input search text">
-  </nz-input-group>
-  <ng-template #suffixButton>
-    <button nz-button nzType="primary" nzSize="large" (click)="search()" nzSearch>Search</button>
-  </ng-template>
+<div nz-row [nzGutter]="24" class="pt-lg">
+  <div class="content__title">
+    <nz-input-group nzSearch nzSize="large" [nzSuffix]="suffixButton" style="width: 100%">
+      <input type="text" [(ngModel)]="city" nz-input placeholder="input search text">
+    </nz-input-group>
+    <ng-template #suffixButton>
+      <button nz-button nzType="primary" nzSize="large" (click)="search()" nzSearch>Search</button>
+    </ng-template>
 
-</div>
+  </div>
+  <div nz-col nzXs="24" nzSm="24" nzMd="24" nzLg="12">
+    <h4 class="margin:8px 0 32px 0;">数据统计</h4>
+    <g2-pie [hasLegend]="true" subTitle="数据统计" [total]="total" [valueFormat]="format" [data]="salesPieData" height="294"></g2-pie>
+  </div>
 
-<div>
-  <nz-table #basicTable [nzData]="dataSet">
-    <thead>
-      <tr>
-        <th>id</th>
-        <th>change</th>
-        <th>desc</th>
-        <th>total</th>
-        <th>last</th>
-        <th>data</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let data of basicTable.data">
-        <td>{{data.sell_id}}</td>
-        <td>{{(100*(data.total - data.last)/data.last).toFixed(2)}}%</td>
-        <td>{{data.desc}}</td>
-        <td>{{data.total}}</td>
-        <td>{{data.last}}</td>
-        <td>{{data.date}}</td>
-      </tr>
-    </tbody>
-  </nz-table>
+  <div>
+    <nz-table #basicTable [nzData]="dataSet">
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>change</th>
+          <th>desc</th>
+          <th>total</th>
+          <th>last</th>
+          <th>data</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of basicTable.data">
+          <td>{{data.sell_id}}</td>
+          <td>{{data.change.toFixed(2)}}%</td>
+          <td>
+            <a [href]="data.url" target="_blank">{{data.desc}}</a>
+          </td>
+          <td>{{data.total}}</td>
+          <td>{{data.last}}</td>
+          <td>{{data.date}}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
 </div>
